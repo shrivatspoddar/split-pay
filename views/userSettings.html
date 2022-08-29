@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SplitPay</title>
+    <link rel="icon" type="image" href="images/icon.jpg" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="Stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="css/payments.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/bc6f27e589.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .userImage {
+        width: 150px;
+        height: 150px;
+        margin-left: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <a href="/home">
+        <div class="paymentOption">
+          <p>Home</p>
+        </div>
+      </a>
+      <a href="/getSplits">
+        <div class="paymentOption">
+          <p>Splits</p>
+        </div>
+      </a>
+      <a href="/chat">
+        <div class="paymentOption">
+          <p>Chat</p>
+        </div>
+      </a>
+      <a href="/userSettings">
+        <div class="paymentOption">
+          <p>Settings</p>
+        </div>
+      </a>
+    </div>
+    <div class="m-container">
+      <div class="b-head">
+        <center>
+          <h3 style="display: inline-block; font-size: 36px; margin-left: 15px">
+            USER SETTINGS
+          </h3>
+        </center>
+      </div>
+      <div class="userDetails">
+        <img id="userDisp" class="userImage" />
+        <div class="textDetails">
+          <h4 id="renderName" style="font-size: 35px; margin: 20px 0"></h4>
+          <p id="renderBal" style="margin: 20px 0"></p>
+        </div>
+      </div>
+
+      <div class="settingOption" style="margin-bottom: 80px; margin-top: 80px">
+        <div style="margin-left: 15px">
+          <h4>Logout</h4>
+          <p>Sign Out of your account</p>
+        </div>
+        <a href="/login" style="color: black; margin-left: auto; margin-top: 0"
+          ><i
+            style="margin-right: 15px; margin-left: auto"
+            class="fas fa-arrow-right"
+          ></i
+        ></a>
+      </div>
+    </div>
+    <script>
+      let tokenId = sessionStorage.getItem("accessToken");
+      console.log("Token " + tokenId);
+
+      //fetching user details
+      fetch("/fetchUserDetail", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "PostmanRuntime/7.28.0",
+          Authorization: "Bearer " + tokenId,
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          document.getElementById("renderName").innerHTML = data.name;
+          document.getElementById("renderBal").innerHTML = data.phoneNo;
+          document.getElementById("userDisp").src =
+            "http://cdn.onlinewebfonts.com/svg/img_258083.png";
+        })
+        .catch((error) => console.log("Error"));
+    </script>
+  </body>
+</html>

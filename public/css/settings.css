@@ -1,0 +1,60 @@
+body {
+  display: flex;
+}
+.sidebar {
+  background-color: #5c07db;
+  min-height: 92vh;
+  flex: 0.15;
+  padding-top: 60px;
+}
+.paymentOption > p {
+  color: white;
+}
+.paymentOption {
+  border: 2px solid white;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 20px 10px;
+}
+
+.m-container {
+  height: 100%;
+  flex: 0.85;
+  border: 1px solid;
+  overflow-y: scroll;
+  border: none;
+}
+.mainContent {
+  box-shadow: 5px 10px 18px #888888;
+  max-width: 60%;
+  border-radius: 30px;
+  padding: 30px;
+  margin: 30px auto;
+}
+
+.userDetails {
+  display: flex;
+  /* justify-content: space-around; */
+}
+.textDetails {
+  margin-left: 15px;
+}
+.settingOption {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  display: flex;
+  border: 3px solid #5c07db;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  align-items: center;
+  height: 100px;
+}
+.settingOption > span > h4 {
+  margin: 0px;
+  padding: 0px;
+}
+.settingOption > span > p {
+  margin: 0px;
+  padding: 0px;
+}

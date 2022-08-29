@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SplitPay</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="Stylesheet" href="css/login.css" />
+    <link rel="icon" type="image" href="images/icon.jpg" />
+    <link rel="stylesheet" href="css/payments.css" />
+    <link rel="stylesheet" href="css/pay.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/bc6f27e589.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .m-container {
+        background-image: url(images/loginbg.jpeg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        max-height: 85vh;
+        margin-top: 5vh;
+        border-radius: 30px;
+        box-shadow: 5px 10px 18px #888888;
+      }
+      .b-body {
+        margin-top: 220px;
+        margin-bottom: 50px;
+      }
+      .login-button {
+        margin: 10px auto;
+        width: 65%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="m-container">
+      <div class="b-body">
+        <h4 style="font-weight: bold">LOGIN</h4>
+        <form id="form" method="POST" action="/createToken">
+          <label for="u-email">Email</label><br />
+          <input name="uEmail" id="u-email" required type="email" /><br />
+          <label for="u-pass">Password</label><br />
+          <input name="uPass" id="u-pass" required type="password" /><br />
+          <center>
+            <input type="submit" value="Login" class="login-button" />
+          </center>
+        </form>
+        <a href="/signup">New Here? Sign Up</a>
+      </div>
+    </div>
+  </body>
+</html>

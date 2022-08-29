@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SplitPay</title>
+    <link rel="icon" type="image" href="image/icon.jpg" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="Stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="css/payments.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/bc6f27e589.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .userImage {
+        width: 150px;
+        height: 150px;
+        margin-left: 30px;
+      }
+      .choiceForm {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      button {
+        border: 3px solid #5c07db;
+        border-radius: 5px;
+        width: 200px;
+        height: 50px;
+        font-size: 20px;
+      }
+      body {
+        display: flex;
+      }
+      .sidebar {
+        background-color: #5c07db;
+        min-height: 92vh;
+        flex: 0.15;
+        padding-top: 60px;
+      }
+      .paymentOption > p {
+        color: white;
+      }
+      .paymentOption {
+        border: 2px solid white;
+        padding: 5px;
+        border-radius: 5px;
+        margin: 20px 10px;
+      }
+      .navbar {
+        color: white;
+        min-height: 50px;
+        padding: 4px 10px;
+        background-color: #5c07db;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px;
+      }
+      .navbar > h3 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        font-size: 30px;
+      }
+      .navbar > a {
+        margin: 0;
+        margin-right: 20px;
+      }
+    </style>
+    <script>
+      const baseRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+      };
+      const allowedCardNetworks = ["MASTERCARD", "VISA"];
+      const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
+      const tokenizationSpecification = {
+        type: "PAYMENT_GATEWAY",
+        parameters: {
+          gateway: "example",
+          gatewayMerchantId: "exampleGatewayMerchantId",
+        },
+      };
+      const baseCardPaymentMethod = {
+        type: "CARD",
+        parameters: {
+          allowedAuthMethods: allowedCardAuthMethods,
+          allowedCardNetworks: allowedCardNetworks,
+        },
+      };
+      const cardPaymentMethod = Object.assign({}, baseCardPaymentMethod, {
+        tokenizationSpecification: tokenizationSpecification,
+      });
+      let paymentsClient = null;
+      function getGoogleIsReadyToPayRequest() {
+        return Object.assign({}, baseRequest, {
+          allowedPaymentMethods: [baseCardPaymentMethod],
+        });
+      }
+      function getGooglePaymentDataRequest() {
+        const paymentDataRequest = Object.assign({}, baseRequest);
+        paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
+        paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
+        paymentDataRequest.merchantInfo = {
+          // @todo a merchant ID is available for a production environment after approval by Google
+          // See {@link https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist|Integration checklist}
+          // merchantId: '12345678901234567890',
+          merchantName: "Example Merchant",
+        };
+        return paymentDataRequest;
+      }
+      function getGooglePaymentsClient() {
+        if (paymentsClient === null) {
+          paymentsClient = new google.payments.api.PaymentsClient({
+            environment: "TEST",
+          });
+        }
+        return paymentsClient;
+      }
+      function onGooglePayLoaded() {
+        const paymentsClient = getGooglePaymentsClient();
+        paymentsClient
+          .isReadyToPay(getGoogleIsReadyToPayRequest())
+          .then(function (response) {
+            if (response.result) {
+              addGooglePayButton();
+            }
+          })
+          .catch(function (err) {
+            console.error(err);
+          });
+      }
+      function addGooglePayButton() {
+        const paymentsClient = getGooglePaymentsClient();
+        const button = paymentsClient.createButton({
+          onClick: onGooglePaymentButtonClicked,
+        });
+        document.getElementById("container").appendChild(button);
+      }
+      function getGoogleTransactionInfo() {
+        return {
+          countryCode: "US",
+          currencyCode: "USD",
+          totalPriceStatus: "FINAL",
+          // set to cart total
+          totalPrice: "1.00",
+        };
+      }
+      function prefetchGooglePaymentData() {
+        const paymentDataRequest = getGooglePaymentDataRequest();
+        paymentDataRequest.transactionInfo = {
+          totalPriceStatus: "NOT_CURRENTLY_KNOWN",
+          currencyCode: "USD",
+        };
+        const paymentsClient = getGooglePaymentsClient();
+        paymentsClient.prefetchPaymentData(paymentDataRequest);
+      }
+      function onGooglePaymentButtonClicked() {
+        const paymentDataRequest = getGooglePaymentDataRequest();
+        paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
+
+        const paymentsClient = getGooglePaymentsClient();
+        paymentsClient
+          .loadPaymentData(paymentDataRequest)
+          .then(function (paymentData) {
+            processPayment(paymentData);
+          })
+          .catch(function (err) {
+            console.error(err);
+          });
+      }
+      function processPayment(paymentData) {
+        console.log(paymentData);
+        paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+      }
+    </script>
+    <script
+      async
+      src="https://pay.google.com/gp/p/js/pay.js"
+      onload="onGooglePayLoaded()"
+    ></script>
+
+    <script>
+      const back = () => {
+        window.history.back();
+      };
+      const update_img = (event) => {
+        var d_img = document.getElementById("img-s");
+        var out = event.target.files[0];
+        d_img.src = URL.createObjectURL(out);
+      };
+    </script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <a href="/home">
+        <div class="paymentOption">
+          <p>Home</p>
+        </div>
+      </a>
+      <a href="/getSplits">
+        <div class="paymentOption">
+          <p>Splits</p>
+        </div>
+      </a>
+      <a href="/chat">
+        <div class="paymentOption">
+          <p>Chat</p>
+        </div>
+      </a>
+      <a href="/userSettings">
+        <div class="paymentOption">
+          <p>Settings</p>
+        </div>
+      </a>
+    </div>
+    <div class="m-container">
+      <div class="navbar">
+        <a href="getSplits"><i class="fas fa-arrow-left"></i></a>
+        <h3>Settling Up</h3>
+      </div>
+      <div class="mainContent">
+        <div class="userDetails">
+          <h4 style="font-size: 30px; margin-left: 20px">
+            Choose mode of settling
+          </h4>
+        </div>
+        <div class="choiceForm">
+          <button onclick="settleUser()" style="cursor: pointer">
+            Settle with cash.
+          </button>
+          <!-- <p id="container"></p> -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function settleUser() {
+        let tokenId = sessionStorage.getItem("accessToken");
+        console.log("Token " + tokenId);
+
+        let userCode = sessionStorage.getItem("userIdentity");
+        console.log("ID: " + userCode);
+        fetchUrl = "/settlePayment/" + userCode + "/";
+        fetch(fetchUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "PostmanRuntime/7.28.0",
+            Authorization: "Bearer " + tokenId,
+          },
+        })
+          .then((res) => {
+            window.location.href = "/home";
+          })
+          .catch((error) => console.log(error));
+      }
+    </script>
+  </body>
+</html>

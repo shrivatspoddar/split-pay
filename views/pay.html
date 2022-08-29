@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SplitPay</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="Stylesheet" href="css/home.css" />
+    <link rel="icon" type="image" href="images/icon.jpg" />
+    <link rel="stylesheet" href="css/payments.css" />
+    <link rel="stylesheet" href="css/pay.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/bc6f27e589.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+      .b-head {
+        display: flex;
+        align-items: center;
+      }
+      body {
+        display: flex;
+      }
+      .sidebar {
+        background-color: #5c07db;
+        min-height: 92vh;
+        flex: 0.15;
+        padding-top: 60px;
+      }
+      .m-container {
+        flex: 0.85;
+      }
+      .paymentOption > p {
+        color: white;
+      }
+      .paymentOption {
+        border: 2px solid white;
+        padding: 5px;
+        border-radius: 5px;
+        margin: 20px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <a href="/home">
+        <div class="paymentOption">
+          <p>Home</p>
+        </div>
+      </a>
+      <a href="/getSplits">
+        <div class="paymentOption">
+          <p>Splits</p>
+        </div>
+      </a>
+      <a href="/chat">
+        <div class="paymentOption">
+          <p>Chat</p>
+        </div>
+      </a>
+      <a href="/userSettings">
+        <div class="paymentOption">
+          <p>Settings</p>
+        </div>
+      </a>
+    </div>
+    <div class="m-container">
+      <div class="b-head">
+        <a href="home"><i class="fas fa-arrow-left"></i></a>
+        <h3 style="font-size: 30px">Make Payments</h3>
+      </div>
+      <div class="paymentForm">
+        <form
+          onsubmit="return createPayment()"
+          method="POST"
+          action="/payment"
+          id="paymentDetailsForm"
+        >
+          <label for="payeeNumber">Enter Phone Number:</label><br />
+          <input
+            class="amtInput"
+            name="payee"
+            id="payeeNumber"
+            type="tel"
+            required
+          /><br /><br />
+          <label for="paymentAmt">Enter Amount</label><br />
+          <input
+            class="amtInput"
+            name="amount"
+            id="paymentAmt"
+            type="number"
+            required
+          /><br /><br />
+          <label for="paymentNote">Enter Note</label><br />
+          <input
+            class="amtInput"
+            name="note"
+            id="paymentNote"
+            type="text"
+            required
+          /><br /><br />
+          <center>
+            <input
+              value="Pay"
+              type="submit"
+              style="width: 50%; margin-top: 10px; cursor: pointer"
+            />
+          </center>
+        </form>
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById("paymentDetailsForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+        });
+      function createPayment() {
+        document
+          .getElementById("paymentDetailsForm")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+          });
+
+        let statusCheck = "true";
+        let payAmt = document.getElementById("paymentAmt").value;
+        let payReceiver = document.getElementById("payeeNumber").value;
+        let payNote = document.getElementById("paymentNote").value;
+
+        if (payReceiver.length != 10) {
+          alert("invalid phone number format.");
+          return false;
+        }
+        let userToken = sessionStorage.getItem("accessToken");
+        console.log(userToken);
+        fetch("/payment", {
+          // mode:'no-cors',
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "PostmanRuntime/7.28.0",
+            Authorization: "Bearer " + userToken,
+          },
+          body: JSON.stringify({
+            amount: parseInt(payAmt),
+            note: payNote,
+            payee: payReceiver,
+          }),
+        })
+          .then(() => {
+            window.location.href = "/home";
+          })
+          .catch((error) => {
+            console.log("error" + error);
+          });
+      }
+    </script>
+  </body>
+</html>
