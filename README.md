@@ -1,3 +1,3 @@
 # SplitPay
-##HCI PROJECT
+## HCI PROJECT
 Refer to Project Report for details
