@@ -1,4 +1,3 @@
 # SplitPay
-
-Hosted on - https://splitpay-iwp.herokuapp.com/
-# split-pay
+##HCI PROJECT
+Refer to Project Report for details
